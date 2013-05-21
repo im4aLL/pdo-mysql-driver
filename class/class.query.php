@@ -27,7 +27,7 @@ class db{
 		$this->dbErrorMsg = 'We are currently experiencing technical difficulties. We have a bunch of monkies working really hard to fix the problem. Check back soon: ';
 	}
 	
-	//database connection
+	//db connection
 	/*
 	* $db = new db();
 	* $db->connect($config);
