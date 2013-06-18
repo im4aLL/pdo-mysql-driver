@@ -247,6 +247,7 @@ class db{
 			if( $cQry->rowCount() > 0 ) $duplicate = true;
 			else $duplicate = false;
 		}
+		else $duplicate = false;
 		
 		$affectedRow = 0;
 		$lastInsertedId = 0;
