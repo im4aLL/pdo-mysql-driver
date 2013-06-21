@@ -2,13 +2,14 @@
 /*
 * CodeYah
 * class.query.php
-* 15.05.2013
+* 21.06.2013
 *
 * ===========================================
 * @package		1.0
 * @author 		Habib Hadi <me@habibhadi.com>
+* @contribution	David Plic <Liberte sua criatividade>
 * @copyright	Codeyah
-* @version    	Release: 1.0 beta
+* @version    	Release: 1.1 beta
 * ===========================================
 */
 
@@ -17,7 +18,16 @@ class db{
 	public $pdo;
 	public $result;
 	public $totalRow;
+	public $DiplayErrorsEndUser = false;
 	public $dbErrorMsg;
+	private $error = array();
+	private $host;
+	private $driver;
+	private $user;
+	private $password;
+	private $dbName;
+	private $tables = array();
+	private $final;
 	
 	//initial
 	public function __construct(){
@@ -36,21 +46,38 @@ class db{
 		if(count($config)==0) return false;
 
 		try {
-            $dsn = "mysql:host=".$config['db_host'].";dbname=".$config['db_name'];
+			
+			$this->host = $config['db_host'];
+			$this->driver = 'mysql';
+			$this->user = $config['db_user'];
+			$this->password = $config['db_pass'];
+			$this->dbName = $config['db_name'];
+		
+            $dsn = "".$this->driver.":host=".$this->host.";dbname=".$this->dbName;
 			$opt = array(
 				// any occurring errors wil be thrown as PDOException
 				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 				// an SQL command to execute when connecting
 				PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'"
 			);
-			$this->pdo = new PDO($dsn, $config['db_user'], $config['db_pass'], $opt);
+			$this->pdo = new PDO($dsn, $this->user, $this->password, $opt);
 			
 			return $this->pdo;
         }
-        catch (PDOException $ex) {
+        catch (PDOException $e) {
             // in case that an error occurs, it returns the error;
-            echo $this->dbErrorMsg . $ex->getMessage();
-			exit();
+			if($this->DiplayErrorsEndUser == true) {
+				
+				echo $this->dbErrorMsg . $e->getMessage();
+				exit();	
+							
+			} else {
+				
+				$this->pdo = null;
+				$this->error[] = $e->getMessage();
+				return false;
+			
+			}
         }
 	}
 	
@@ -72,6 +99,10 @@ class db{
 		return $this->result;
 	}
 	
+	public function error(){
+		return $this->error;
+	}
+	
 	//get result data
 	/*
 	* see query / select function usage
@@ -80,6 +111,41 @@ class db{
 		return $this->totalRow;
 	}
 	
+	//safe execution
+	/*
+	* David Plic
+	*/
+	public function safe_execution($dataArray,$qryStr){
+		
+		$qry = $this->pdo->prepare($qryStr);
+		
+		foreach( $dataArray as $k=>$v ) {
+					
+				if(is_int($v)) {
+                    $param = PDO::PARAM_INT;
+                } elseif(is_bool($v)) {
+                    $param = PDO::PARAM_BOOL;
+                } elseif(is_null($v)) {
+                    $param = PDO::PARAM_NULL;
+                } elseif(is_string($v)) {
+                    $param = PDO::PARAM_STR;
+                } else {
+                    $param = PDO::PARAM_STR;
+                }    
+                if($param) {
+
+				$qry->bindValue(":$k", $v ,$param);
+				
+				}
+		}
+				
+		$qry->execute();
+		// affected row
+		$affectedRow = $qry->rowCount();
+				
+		return $affectedRow;
+	}	
+		
 	//direct query
 	/*
 	* $db = new db();
@@ -102,9 +168,19 @@ class db{
 			// total row count
 			$this->totalRow = $qry->rowCount();
 		}
-		catch (PDOException $ex){
-			echo $this->dbErrorMsg . $ex->getMessage();
-			exit();
+		catch (PDOException $e){
+			if($this->DiplayErrorsEndUser == true) {
+				
+				echo $this->dbErrorMsg . $e->getMessage();
+				exit();	
+							
+			} else {
+				
+				$this->pdo = null;
+				$this->error[] = $e->getMessage();
+				return false;
+			
+			}
 		}
 	}
 	
@@ -140,9 +216,19 @@ class db{
 			// total row count
 			$this->totalRow = $qry->rowCount();
 		}
-		catch (PDOException $ex){
-			echo $this->dbErrorMsg . $ex->getMessage();
-			exit();
+		catch (PDOException $e){
+			if($this->DiplayErrorsEndUser == true) {
+				
+				echo $this->dbErrorMsg . $e->getMessage();
+				exit();	
+							
+			} else {
+				
+				$this->pdo = null;
+				$this->error[] = $e->getMessage();
+				return false;
+			
+			}
 		}
 	}
 	
@@ -193,18 +279,24 @@ class db{
 			
 			try {
 				//query
-				$qry = $this->pdo->prepare($qryStr);
-				$qry->execute($executeArray);
-				
-				// affected row
-				$affectedRow = $qry->rowCount();
+				$affectedRow = $this->safe_execution($dataArray,$qryStr);
 				
 				// last inseretd id
 				$lastInsertedId = $this->pdo->lastInsertId();
 			}
-			catch (PDOException $ex){
-				echo $this->dbErrorMsg . $ex->getMessage();
-				exit();
+			catch (PDOException $e){
+				if($this->DiplayErrorsEndUser == true) {
+				
+					echo $this->dbErrorMsg . $e->getMessage();
+					exit();	
+							
+				} else {
+				
+					$this->pdo = null;
+					$this->error[] = $e->getMessage();
+					return false;
+			
+				}
 			}	
 		}
 		
@@ -270,16 +362,21 @@ class db{
 			
 			try {
 				//query
-				$qry = $this->pdo->prepare($qryStr);
-				$qry->execute($executeArray);
-				
-				// affected row
-				$affectedRow = $qry->rowCount();
-
+				$affectedRow = $this->safe_execution($dataArray,$qryStr);
 			}
-			catch (PDOException $ex){
-				echo $this->dbErrorMsg . $ex->getMessage();
-				exit();
+			catch (PDOException $e){
+				if($this->DiplayErrorsEndUser == true) {
+				
+					echo $this->dbErrorMsg . $e->getMessage();
+					exit();	
+							
+				} else {
+				
+					$this->pdo = null;
+					$this->error[] = $e->getMessage();
+					return false;
+			
+				}
 			}	
 		}
 		
@@ -312,22 +409,163 @@ class db{
 			
 			try {
 				//query
-				$qry = $this->pdo->prepare($qryStr);
-				$qry->execute();
-				
-				// affected row
-				$affectedRow = $qry->rowCount();
+				$affectedRow = $this->safe_execution($where,$qryStr);
 
 			}
-			catch (PDOException $ex){
-				echo $this->dbErrorMsg . $ex->getMessage();
-				exit();
+			catch (PDOException $e){
+				if($this->DiplayErrorsEndUser == true) {
+				
+					echo $this->dbErrorMsg . $e->getMessage();
+					exit();	
+							
+				} else {
+				
+					$this->pdo = null;
+					$this->error[] = $e->getMessage();
+					return false;
+			
+				}
 			}	
 		}
 		
 		return array('affectedRow' => $affectedRow);	
 		
 	}
+	
+	## functions of backup
+	/**
+	 *
+	 * Call this function to get the database backup
+	 * @example $db->backup();
+	 */
+	public function backup(){
+		//return $this->final;
+		if(count($this->error)>0){
+			return array('error'=>true, 'msg'=>$this->error);
+		}
+		
+		$this->final = 'CREATE DATABASE ' . $this->dbName.";\n\n";
+		$this->getTables();
+		$this->generateBackup();
+		
+		return array('error'=>false, 'msg'=>$this->final);
+	}
+
+	/**
+	 *
+	 * Generate backup string
+	 * @uses Private use
+	 */
+	private function generateBackup(){
+		foreach ($this->tables as $tbl) {
+			$this->final .= '--CREATING TABLE '.$tbl['name']."\n";
+			$this->final .= $tbl['create'] . ";\n\n";
+			$this->final .= '--INSERTING DATA INTO '.$tbl['name']."\n";
+			$this->final .= $tbl['data']."\n\n\n";
+		}
+		$this->final .= '-- THE END'."\n\n";
+	}
+
+
+
+	/**
+	 *
+	 * Get the list of tables
+	 * @uses Private use
+	 */
+	private function getTables(){
+		try {
+			$stmt = $this->pdo->query('SHOW TABLES');
+			$tbs = $stmt->fetchAll();
+			$i=0;
+			foreach($tbs as $table){
+				$this->tables[$i]['name'] = $table[0];
+				$this->tables[$i]['create'] = $this->getColumns($table[0]);
+				$this->tables[$i]['data'] = $this->getData($table[0]);
+				$i++;
+			}
+			unset($stmt);
+			unset($tbs);
+			unset($i);
+
+			return true;
+		} catch (PDOException $e) {
+			if($this->DiplayErrorsEndUser == true) {
+				
+				echo $this->dbErrorMsg . $e->getMessage();
+				exit();	
+							
+			} else {
+				
+				$this->pdo = null;
+				$this->error[] = $e->getMessage();
+				return false;
+			
+			}
+		}
+	}
+
+	/**
+	 *
+	 * Get the list of Columns
+	 * @uses Private use
+	 */
+	private function getColumns($tableName){
+		try {
+			$stmt = $this->pdo->query('SHOW CREATE TABLE '.$tableName);
+			$q = $stmt->fetchAll();
+			$q[0][1] = preg_replace("/AUTO_INCREMENT=[\w]*./", '', $q[0][1]);
+			return $q[0][1];
+		} catch (PDOException $e){
+			if($this->DiplayErrorsEndUser == true) {
+				
+				echo $this->dbErrorMsg . $e->getMessage();
+				exit();	
+							
+			} else {
+				
+				$this->pdo = null;
+				$this->error[] = $e->getMessage();
+				return false;
+			
+			}
+		}
+	}
+
+	/**
+	 *
+	 * Get the insert data of tables
+	 * @uses Private use
+	 */
+	private function getData($tableName){
+		try {
+			$stmt = $this->pdo->query('SELECT * FROM '.$tableName);
+			$q = $stmt->fetchAll(PDO::FETCH_NUM);
+			$data = '';
+			foreach ($q as $pieces){
+				foreach($pieces as &$value){
+					$value = htmlentities(addslashes($value));
+				}
+				$data .= 'INSERT INTO '. $tableName .' VALUES (\'' . implode('\',\'', $pieces) . '\');'."\n";
+			}
+			return $data;
+		} catch (PDOException $e){
+			
+			if($this->DiplayErrorsEndUser == true) {
+				
+				echo $this->dbErrorMsg . $e->getMessage();
+				exit();	
+							
+			} else {
+				
+				$this->pdo = null;
+				$this->error[] = $e->getMessage();
+				return false;
+			
+			}
+		}
+	}	
+	## End functions of Backup
 	
 }
 ?>
