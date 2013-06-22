@@ -73,7 +73,7 @@ class db{
 							
 			} else {
 				
-				$this->pdo = null;
+				$this->pdo = NULL;
 				$this->error[] = $e->getMessage();
 				return false;
 			
@@ -176,7 +176,6 @@ class db{
 							
 			} else {
 				
-				$this->pdo = null;
 				$this->error[] = $e->getMessage();
 				return false;
 			
@@ -224,7 +223,6 @@ class db{
 							
 			} else {
 				
-				$this->pdo = null;
 				$this->error[] = $e->getMessage();
 				return false;
 			
@@ -292,7 +290,6 @@ class db{
 							
 				} else {
 				
-					$this->pdo = null;
 					$this->error[] = $e->getMessage();
 					return false;
 			
@@ -372,7 +369,6 @@ class db{
 							
 				} else {
 				
-					$this->pdo = null;
 					$this->error[] = $e->getMessage();
 					return false;
 			
@@ -420,7 +416,6 @@ class db{
 							
 				} else {
 				
-					$this->pdo = null;
 					$this->error[] = $e->getMessage();
 					return false;
 			
@@ -497,7 +492,6 @@ class db{
 							
 			} else {
 				
-				$this->pdo = null;
 				$this->error[] = $e->getMessage();
 				return false;
 			
@@ -524,7 +518,6 @@ class db{
 							
 			} else {
 				
-				$this->pdo = null;
 				$this->error[] = $e->getMessage();
 				return false;
 			
@@ -558,7 +551,6 @@ class db{
 							
 			} else {
 				
-				$this->pdo = null;
 				$this->error[] = $e->getMessage();
 				return false;
 			
