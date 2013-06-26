@@ -112,7 +112,7 @@ class db{
 	/*
 	* $db = new db();
 	* $db->connect($config);
-	* $qryArray = array( 'tbl_name' => 'users', 'field' => array('email', 'nickname'), 'method' => PDO::FETCH_OBJ, 'condition' => ' WHERE id = 1', 'limit' => '0,30', 'orderby' => 'created_at' );
+	* $qryArray = array( 'tbl_name' => 'users', 'field' => array('email', 'nickname'), 'method' => PDO::FETCH_OBJ, 'condition' => ' WHERE id = 1', 'limit' => '0,30', 'orderby' => 'created_at', 'groupby' => 'category' );
 	* $db->select($qryArray);
 	* $db->result();
 	*/
@@ -124,6 +124,7 @@ class db{
 		//preparing query string
 		$qryStr = 'SELECT '.$fetchFields.' FROM `'.$qryArray['tbl_name'].'` '.((isset($qryArray['condition']) && $qryArray['condition']!=NULL)?$qryArray['condition']:'');
 		if(isset($qryArray['orderby']) && $qryArray['orderby']!=NULL) $qryStr .= ' ORDER BY '.$qryArray['orderby'];
+		if(isset($qryArray['groupby']) && $qryArray['groupby']!=NULL) $qryStr .= ' GROUP BY '.$qryArray['groupby'];
 		if(isset($qryArray['limit']) && $qryArray['limit']!=NULL) $qryStr .= ' LIMIT '.$qryArray['limit'];
 		
 		try {
