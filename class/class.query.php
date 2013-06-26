@@ -112,7 +112,7 @@ class db{
 	/*
 	* $db = new db();
 	* $db->connect($config);
-	* $qryArray = array( 'tbl_name' => 'users', 'field' => array('email', 'nickname'), 'method' => PDO::FETCH_OBJ, 'condition' => ' WHERE id = 1', 'limit' => '0,30', 'orderby' => 'created_at', 'groupby' => 'category' );
+	* $qryArray = array( 'tbl_name' => 'users', 'field' => array('email', 'nickname'), 'method' => PDO::FETCH_OBJ, 'condition' => ' WHERE id = 1', 'limit' => '0,30', 'orderby' => 'created_at', 'groupby' => 'cat' );
 	* $db->select($qryArray);
 	* $db->result();
 	*/

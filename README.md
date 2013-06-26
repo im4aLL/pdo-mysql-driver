@@ -53,7 +53,7 @@ This is simple class for SELECT, INSERT, UPDATE, DELETE query for MySQL
 #####Example
     $db = new db();
     $db->connect($config);
-    $qryArray = array( 'tbl_name' => 'users', 'field' => array('email', 'nickname'), 'method' => PDO::FETCH_OBJ, 'condition' => ' WHERE id = 1', 'limit' => '0,30', 'orderby' => 'id' );
+    $qryArray = array( 'tbl_name' => 'users', 'field' => array('email', 'nickname'), 'method' => PDO::FETCH_OBJ, 'condition' => ' WHERE id = 1', 'limit' => '0,30', 'orderby' => 'created_at', 'groupby' => 'category' );
     $db->select($qryArray);
     $db->result();
     
