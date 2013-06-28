@@ -123,8 +123,8 @@ class db{
 		
 		//preparing query string
 		$qryStr = 'SELECT '.$fetchFields.' FROM `'.$qryArray['tbl_name'].'` '.((isset($qryArray['condition']) && $qryArray['condition']!=NULL)?$qryArray['condition']:'');
-		if(isset($qryArray['orderby']) && $qryArray['orderby']!=NULL) $qryStr .= ' ORDER BY '.$qryArray['orderby'];
 		if(isset($qryArray['groupby']) && $qryArray['groupby']!=NULL) $qryStr .= ' GROUP BY '.$qryArray['groupby'];
+		if(isset($qryArray['orderby']) && $qryArray['orderby']!=NULL) $qryStr .= ' ORDER BY '.$qryArray['orderby'];
 		if(isset($qryArray['limit']) && $qryArray['limit']!=NULL) $qryStr .= ' LIMIT '.$qryArray['limit'];
 		
 		try {
