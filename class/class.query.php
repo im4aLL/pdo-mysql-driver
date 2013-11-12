@@ -223,6 +223,7 @@ class db{
 	public function update($tableName, $dataArray = array(), $where, $unique = array()){
 		$fields = array();
 		$executeArray = array();
+		$duplicate = false;
 		
 		//populating field array
 		foreach($dataArray as $key=>$val){
@@ -241,7 +242,16 @@ class db{
 				$condition[] = $fieldName." = '".$dataArray[$fieldName]."' ";
 			}
 
+			$extendedCondition = array();
+			if( count($where) > 0 ){
+				foreach($where as $whereKey=>$whereVal){
+					$extendedCondition[] = $whereKey." != '".$whereVal."' ";
+				}
+			}
+
 			$cQryStr = "SELECT ".$unique[0]." FROM ".$tableName." WHERE ".implode('AND ',$condition);
+			if( count($extendedCondition) > 0 ) $cQryStr .= " AND ".implode('AND ', $extendedCondition);
+
 			$cQry = $this->pdo->query($cQryStr);
 			
 			//checking duplicate
