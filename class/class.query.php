@@ -158,6 +158,7 @@ class db{
 		
 		$fields = array();
 		$executeArray = array();
+		$duplicate = false;
 		
 		//populating field array
 		foreach($dataArray as $key=>$val){
