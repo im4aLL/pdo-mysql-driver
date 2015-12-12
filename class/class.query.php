@@ -85,20 +85,26 @@ class db{
 	* $db = new db();
 	* $db->connect($config);
 	* $db->query('SELECT * FROM users WHERE id = 1');
-	* $db->select($qryArray);
 	* $db->result();
 	*/
+	
+	public function startsWith($haystack, $needle) {
+	    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+	}
+
 	public function query($queryString, $method = PDO::FETCH_OBJ){
-		
+
 		try {
-			//query
+			// query
 			$qry = $this->pdo->prepare($queryString);
 			$qry->execute();
 			$qry->setFetchMode($method);
-			
-			//stroring data arrary into $result
-			$this->result = $qry->fetchAll();
-			
+
+			// stroring data arrary into $result
+			if( $this->startsWith($queryString, "SELECT") ){
+				$this->result = $qry->fetchAll();
+			}
+
 			// total row count
 			$this->totalRow = $qry->rowCount();
 		}
