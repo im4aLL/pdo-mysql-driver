@@ -1,76 +1,120 @@
-#PDO MySql driver class for PHP
-##Introduction
+# PDO MySql driver class for PHP
+## Introduction
 This is simple class for SELECT, INSERT, UPDATE, DELETE query for MySQL
 
-##Usage
+## Usage
 
-###Connection
+### Connection
+```php
+$config = [
+    'host' => 'localhost',
+    'name' => 'temp',
+    'username' => 'root',
+    'password' => '',
+];
 
-    // initializing configuration array file
-    $config = array();
-    
-    // database settings variables
-    $config['db_name'] = 'codeyah';
-    $config['db_host'] = 'localhost';
-    $config['db_user'] = 'root';
-    $config['db_pass'] = '';
-    
-    // Class files
-    include('class/class.query.php');
-    
-    // initializing db class
-    $db = new db();
-    
-    // connecting to DB
-    $db->connect($config);
-    
-###Disconnect
-    $db = new db();
-    $db->connect($config);
-    $db->disconnect();
-    
-###Select Query
+$db = new Database();
+$db->connect($config);
+```
 
-####Method #1
-    $db = new db();
-    $db->connect($config);
-    $db->query('SELECT * FROM users WHERE id = 1'); // just write like mysql_query
-    $db->result();
+### Disconnect
+```php
+$db->disconnect();
+```
     
-####Method #2
+### Select Query
 
-#####Syntax
-    select(
-      array(
-        'tbl_name' => 'your table name',
-        'field' => array('field 1', 'field 2') or array() // if array contain no value then it will fetch all (*),
-        'method' => check the available list for PDO::FETCH // default is PDO::FETCH_OBJ
-        'condition' => '',
-        'limit' => ''
-      )
-    )
+#### Method #1
+```php
+$db->query('SELECT * FROM users')->get();
+```
 
-#####Example
-    $db = new db();
-    $db->connect($config);
-    $qryArray = array( 'tbl_name' => 'users', 'field' => array('email', 'nickname'), 'method' => PDO::FETCH_OBJ, 'condition' => ' WHERE id = 1', 'limit' => '0,30', 'orderby' => 'created_at', 'groupby' => 'category' );
-    $db->select($qryArray);
-    $db->result();
+```php
+$db->query('SELECT * FROM users')->first();
+```
     
-###Insert
-    syntax - connection->insert(table name, insert data array, duplicated field checking array)
-    
-    $inserted = $db->insert('users', array('email'=>'c@yahoo.com', 'nickname'=> 'Mr. C', 'password' => '159159'), array('email'));
-    print_r($inserted);
-    
-###Update
-    syntax - update(tableName, updatedDataArray, whereArray, duplicateCheckingArray);
-    
-    $db->update('users', array('nickname'=> 'Hadi', 'email'=> 'a@gmail.com'), array('id'=>1, 'nickname'=>'Mr. A'), array('email'));
-    
-###Delete
-    $db->delete('users', array('id'=>1));
-    
+#### Method #2
 
+```php
+$db->table('users')->select([
+    'field' => ['name', 'username'],
+])->first();
+```
 
-Remember all query will return array data. To view use print_r function. If anybody need more explanation with example then feel to ask.
+```php
+$db->table('users')->select([
+    'field' => ['name', 'username'],
+    'condition' => 'WHERE id > 0',
+    'limit' => '0, 10',
+    'orderby' => 'name',
+    'groupby' => 'name',
+])->first();
+```
+    
+### Insert
+
+Insert data:
+```php
+$db->table('users')->insert(['name' => 'John doe', 'email' => 'john@email.com']);
+```
+
+Insert data when supplied email `john@email.com` not exists in table `users`:
+
+```php
+$db->table('users')->insert(
+    ['name' => 'John doe', 'email' => 'john@email.com'],
+    ['email']
+);
+```
+
+##### result
+
+```
+affected_row
+inserted_id
+is_duplicate
+```
+    
+### Update
+
+Update data where `id = 1`
+```php
+$db->table('users')->update(
+    ['name' => 'John doe', 'email' => 'john@email.com'],
+    ['id' => 1]
+);
+```
+
+or 
+```php
+$db->table('users')->update(
+    ['username' => 'johndoe'],
+    'id = 1'
+);
+```
+
+update `username` if nobody else using same username
+
+```php
+$db->table('users')->update(
+    ['username' => 'johndoe'],
+    ['id' => 4],
+    ['username']
+);
+```
+
+##### result
+```
+affected_row
+is_duplicate
+```
+    
+### Delete
+```php
+$db->table('users')->delete(['id' => 4]);
+```
+
+##### result
+```
+affected_row
+```
