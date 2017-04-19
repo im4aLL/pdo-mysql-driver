@@ -13,12 +13,14 @@ $db->connect($config);
 
 
 
-$users = $db->table('users')->delete(['id' => 4]);
+$gpsdata = $db->table('gpsdata')->select([
+    'method' => PDO::FETCH_ASSOC
+])->get();
 
 echo '<pre>';
 print_r($db->debug());
 
-print_r($users);
+print_r($gpsdata);
 echo '</pre>';
 
 $db->disconnect();

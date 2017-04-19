@@ -90,6 +90,11 @@ class Database
         return $this->queryDebug;
     }
 
+    public function total()
+    {
+        return $this->total;
+    }
+
 
     /**
      * If string starts with
