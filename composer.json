@@ -1,0 +1,16 @@
+{
+    "name": "hadi/database",
+    "description": "Simple database driver for mysql (PDO)",
+    "type": "composer-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Habib Hadi",
+            "email": "me@habibhadi.com"
+        }
+    ],
+    "require": {},
+	"autoload": {
+        "psr-4": {"Hadi\\": "src/"}
+    }
+}

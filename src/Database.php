@@ -1,20 +1,22 @@
 <?php
 
 /**
- * Class Database
+ * Class Database Driver
  *
  * @author me@habibhadi.com
  * @version 2.0.0
  */
+
+namespace Hadi;
 
 class Database
 {
     protected $pdo;
     protected $result = false;
     protected $total;
-    protected $dbErrorMsg = 'We are currently experiencing technical difficulties. We have a bunch of monkies working really hard to fix the problem. Check back soon: ';
+    public $dbErrorMsg = 'We are currently experiencing technical difficulties. We have a bunch of monkies working really hard to fix the problem. Check back soon: ';
     protected $tableName = NULL;
-    protected $fetchMethod = PDO::FETCH_OBJ;
+    public $fetchMethod = \PDO::FETCH_OBJ;
     protected $queryDebug = [];
 
     /**
@@ -32,11 +34,11 @@ class Database
         try {
             $dsn = "mysql:host=" . $config['host'] . ";dbname=" . $config['name'];
             $opt = array(
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'"
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'"
             );
 
-            $this->pdo = new PDO($dsn, $config['username'], $config['password'], $opt);
+            $this->pdo = new \PDO($dsn, $config['username'], $config['password'], $opt);
 
             return $this->pdo;
         } catch (PDOException $ex) {
