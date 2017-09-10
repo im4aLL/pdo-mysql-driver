@@ -1,7 +1,7 @@
 {
     "name": "hadi/database",
     "description": "Simple database driver for mysql (PDO)",
-    "type": "composer-plugin",
+    "type": "package",
     "license": "MIT",
     "authors": [
         {
