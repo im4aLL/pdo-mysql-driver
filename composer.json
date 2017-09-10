@@ -14,5 +14,5 @@
         "psr-4": {"Hadi\\": "src/"}
     },
     "version": "1.0.0",
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
