@@ -9,10 +9,15 @@
             "email": "me@habibhadi.com"
         }
     ],
-    "require": {},
+    "require": {
+		"composer-plugin-api": "^1.1"
+	},
 	"autoload": {
         "psr-4": {"Hadi\\": "src/"}
     },
     "version": "1.0.0",
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+	"extra": {
+        "class": "Hadi\\Database"
+    }
 }
