@@ -1,6 +1,12 @@
 # PDO MySql driver class for PHP
+
 ## Introduction
 This is simple class for SELECT, INSERT, UPDATE, DELETE query for MySQL
+
+## Installation 
+`composer require hadi/database`
+
+if you don't want composer then simple grab class file from src/Database.php and use it!
 
 ## Usage
 
@@ -13,7 +19,7 @@ $config = [
     'password' => '',
 ];
 
-$db = new Database();
+$db = new \Hadi\Database();
 $db->connect($config);
 ```
 
